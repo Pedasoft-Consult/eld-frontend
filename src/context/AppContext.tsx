@@ -1,10 +1,10 @@
 // context/AppContext.tsx
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { User, Trip, ELDLog, AppContextType } from '../types';
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-export const useAppContext = () => {
+export const useAppContext = (): AppContextType => {
   const context = useContext(AppContext);
   if (!context) {
     throw new Error('useAppContext must be used within AppProvider');
@@ -122,19 +122,29 @@ export const mockEldLogs: ELDLog[] = [
   }
 ];
 
-export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface AppProviderProps {
+  children: ReactNode;
+}
+
+export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(mockUser);
   const [currentTrip, setCurrentTrip] = useState<Trip | null>(mockTrips[0]);
   const [trips, setTrips] = useState<Trip[]>(mockTrips);
   const [eldLogs, setEldLogs] = useState<ELDLog[]>(mockEldLogs);
 
+  const contextValue: AppContextType = {
+    user,
+    setUser,
+    currentTrip,
+    setCurrentTrip,
+    trips,
+    setTrips,
+    eldLogs,
+    setEldLogs
+  };
+
   return (
-    <AppContext.Provider value={{
-      user, setUser,
-      currentTrip, setCurrentTrip,
-      trips, setTrips,
-      eldLogs, setEldLogs
-    }}>
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );

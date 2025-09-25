@@ -156,7 +156,7 @@ const Dashboard: React.FC = () => {
         <div className="p-6">
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-sm font-medium">Trip started</p>
                 <p className="text-xs text-gray-500">Richmond, VA - 06:00 AM</p>
@@ -165,7 +165,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-sm font-medium">Duty status changed to Driving</p>
                 <p className="text-xs text-gray-500">Fredericksburg, VA - 07:30 AM</p>
@@ -174,7 +174,7 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-4">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+              <div className="w-2 h-2 bg-yellow-500 rounded-full flex-shrink-0" />
               <div className="flex-1">
                 <p className="text-sm font-medium">30-minute break taken</p>
                 <p className="text-xs text-gray-500">Baltimore, MD - 14:00 PM</p>

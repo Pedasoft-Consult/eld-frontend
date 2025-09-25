@@ -14,6 +14,30 @@ interface RouteOptions {
   departureTime: string;
 }
 
+interface RouteResult {
+  distance: number;
+  estimatedTime: number; // minutes
+  requiredBreaks: Array<{
+    time: string;
+    duration: number;
+    type: string;
+    location: string;
+  }>;
+  fuelStops: Array<{
+    location: string;
+    distance: number;
+  }>;
+  restAreas: Array<{
+    location: string;
+    distance: number;
+  }>;
+  compliance: {
+    hosCompliant: boolean;
+    warnings: string[];
+    suggestions: string[];
+  };
+}
+
 const RoutePlanner: React.FC = () => {
   const [routeData, setRouteData] = useState<RouteOptions>({
     origin: '',
@@ -27,10 +51,10 @@ const RoutePlanner: React.FC = () => {
     departureTime: '06:00'
   });
 
-  const [isPlanning, setIsPlanning] = useState(false);
-  const [routeResult, setRouteResult] = useState<any>(null);
+  const [isPlanning, setIsPlanning] = useState<boolean>(false);
+  const [routeResult, setRouteResult] = useState<RouteResult | null>(null);
 
-  const handlePlanRoute = async () => {
+  const handlePlanRoute = async (): Promise<void> => {
     setIsPlanning(true);
 
     // Simulate API call for route planning
@@ -58,9 +82,9 @@ const RoutePlanner: React.FC = () => {
     }, 2000);
   };
 
-  const addStop = () => {
+  const addStop = (): void => {
     const stopInput = document.getElementById('new-stop') as HTMLInputElement;
-    if (stopInput.value.trim()) {
+    if (stopInput?.value.trim()) {
       setRouteData({
         ...routeData,
         stops: [...routeData.stops, stopInput.value.trim()]
@@ -69,11 +93,17 @@ const RoutePlanner: React.FC = () => {
     }
   };
 
-  const removeStop = (index: number) => {
+  const removeStop = (index: number): void => {
     setRouteData({
       ...routeData,
       stops: routeData.stops.filter((_, i) => i !== index)
     });
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
+    if (e.key === 'Enter') {
+      addStop();
+    }
   };
 
   return (
@@ -145,6 +175,7 @@ const RoutePlanner: React.FC = () => {
                     type="text"
                     placeholder="Add a stop"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onKeyPress={handleKeyPress}
                   />
                   <button
                     onClick={addStop}
@@ -240,7 +271,7 @@ const RoutePlanner: React.FC = () => {
           >
             {isPlanning ? (
               <>
-                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></div>
+                <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
                 <span>Planning Route...</span>
               </>
             ) : (
