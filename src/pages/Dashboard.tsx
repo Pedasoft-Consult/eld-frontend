@@ -1,11 +1,11 @@
 // pages/Dashboard.tsx
 import React from 'react';
-import { Clock, Timer, Coffee, Route, MapPin, User } from 'lucide-react';
+import { Clock, Timer, Coffee, Navigation, MapPin } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { StatCard, StatusBadge, ProgressBar } from '../components/shared';
 
 const Dashboard: React.FC = () => {
-  const { trips, eldLogs, user } = useAppContext();
+  const { trips, eldLogs } = useAppContext();
   const activeTrip = trips.find(trip => trip.status === 'active');
   const todayLog = eldLogs[0];
 
@@ -35,7 +35,7 @@ const Dashboard: React.FC = () => {
           color="bg-yellow-100"
         />
         <StatCard
-          icon={<Route className="w-6 h-6 text-purple-600" />}
+          icon={<Navigation className="w-6 h-6 text-purple-600" />}
           title="Weekly Hours"
           value="45 / 70"
           subtitle="8-day period"

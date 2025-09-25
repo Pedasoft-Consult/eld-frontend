@@ -71,7 +71,8 @@ const ELDLogs: React.FC = () => {
       <div className="mb-4">
         <h4 className="font-medium text-gray-900 mb-3">Duty Status Changes</h4>
         <div className="space-y-2">
-          {log.dutyStatusChanges.slice(0, 3).map((change, index: number) => (
+          {/* FIX: Removed unused 'index' parameter */}
+          {log.dutyStatusChanges.slice(0, 3).map((change) => (
             <div key={change.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0">
               <div className="flex items-center space-x-3">
                 <div className={`w-3 h-3 rounded-full ${
@@ -104,7 +105,8 @@ const ELDLogs: React.FC = () => {
         <div className="mb-4">
           <h4 className="font-medium text-gray-900 mb-3">Rest Breaks</h4>
           <div className="space-y-2">
-            {log.restBreaks.map((restBreak, index: number) => (
+            {/* FIX: Renamed 'index' to '_index' to mark as intentionally unused */}
+            {log.restBreaks.map((restBreak, _index: number) => (
               <div key={restBreak.id} className="bg-blue-50 rounded-lg p-3">
                 <div className="flex justify-between items-start">
                   <div>
@@ -132,8 +134,9 @@ const ELDLogs: React.FC = () => {
             <h4 className="font-medium text-red-800">HOS Violations</h4>
           </div>
           <div className="space-y-2">
-            {log.violations.map((violation, index: number) => (
-              <div key={index} className="bg-white rounded p-3">
+            {/* FIX: Renamed 'index' to '_index' to mark as intentionally unused */}
+            {log.violations.map((violation, _index: number) => (
+              <div key={_index} className="bg-white rounded p-3">
                 <div className="flex justify-between items-start">
                   <div>
                     <p className="font-medium text-red-800">{violation.description}</p>
@@ -216,6 +219,7 @@ const ELDLogs: React.FC = () => {
                   <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-300"></div>
 
                   <div className="space-y-4">
+                    {/* NOTE: 'index' is USED here to calculate the duration, so it is kept */}
                     {selectedLog.dutyStatusChanges.map((change, index: number) => (
                       <div key={change.id} className="relative flex items-center space-x-4">
                         <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center ${

@@ -1,6 +1,6 @@
 // pages/Compliance.tsx
 import React, { useState } from 'react';
-import { Shield, AlertTriangle, CheckCircle, Clock, User, Coffee, Bed, Calendar } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, Clock, Coffee, Bed, Calendar } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { StatusBadge, ProgressBar } from '../components/shared';
 
@@ -15,7 +15,7 @@ interface ComplianceRule {
 }
 
 const Compliance: React.FC = () => {
-  const { eldLogs } = useAppContext();
+  const { /* eldLogs removed */ } = useAppContext();
   const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | 'cycle'>('today');
 
   // Mock compliance data
@@ -88,14 +88,7 @@ const Compliance: React.FC = () => {
     }
   ];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'compliant': return 'text-green-600';
-      case 'warning': return 'text-yellow-600';
-      case 'violation': return 'text-red-600';
-      default: return 'text-gray-600';
-    }
-  };
+  // getStatusColor removed as it was unused
 
   const getStatusIcon = (status: string) => {
     switch (status) {
