@@ -1,9 +1,9 @@
 // pages/Trips.tsx
 import React, { useState } from 'react';
-import { Plus, X, MapPin, Clock, Truck, Calendar, Edit, Trash2 } from 'lucide-react';
+import { Plus, X, MapPin, Clock, Truck, Edit, Trash2 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { StatusBadge } from '../components/shared';
-import { Trip, Load } from '../types';
+import { Trip } from '../types';
 
 const Trips: React.FC = () => {
   const { trips, setTrips } = useAppContext();
@@ -345,40 +345,6 @@ const Trips: React.FC = () => {
                   </div>
                 </div>
               </div>
-
-              {/* Progress Section */}
-              {selectedTrip.status === 'active' && (
-                <div>
-                  <h3 className="font-semibold mb-4">Progress</h3>
-                  <div className="grid grid-cols-3 gap-4 mb-4">
-                    <div className="bg-blue-50 rounded-lg p-3 text-center">
-                      <p className="text-sm text-blue-600 font-medium">Current Hours</p>
-                      <p className="text-lg font-semibold text-blue-900">{selectedTrip.currentHours}h</p>
-                    </div>
-                    <div className="bg-green-50 rounded-lg p-3 text-center">
-                      <p className="text-sm text-green-600 font-medium">Remaining Today</p>
-                      <p className="text-lg font-semibold text-green-900">{selectedTrip.remainingDrivingHours}h</p>
-                    </div>
-                    <div className="bg-yellow-50 rounded-lg p-3 text-center">
-                      <p className="text-sm text-yellow-600 font-medium">Next Break</p>
-                      <p className="text-lg font-semibold text-yellow-900">{selectedTrip.nextBreakRequired}</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Trip Progress</span>
-                      <span>{selectedTrip.currentHours}/{selectedTrip.estimatedHours} hours</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-3">
-                      <div
-                        className="bg-blue-600 h-3 rounded-full transition-all duration-300"
-                        style={{ width: `${Math.min((selectedTrip.currentHours / selectedTrip.estimatedHours) * 100, 100)}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* Loads */}
               <div>

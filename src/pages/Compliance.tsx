@@ -1,54 +1,90 @@
 // pages/Compliance.tsx
 import React, { useState } from 'react';
-import { Clock, Timer, Calendar, AlertTriangle, CheckCircle, Coffee, Shield, TrendingUp, Book } from 'lucide-react';
+import { Shield, AlertTriangle, CheckCircle, Clock, User, Coffee, Bed, Calendar } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
-import { ProgressBar } from '../components/shared';
+import { StatusBadge, ProgressBar } from '../components/shared';
+
+interface ComplianceRule {
+  id: string;
+  name: string;
+  description: string;
+  limit: number;
+  current: number;
+  period: string;
+  status: 'compliant' | 'warning' | 'violation';
+}
 
 const Compliance: React.FC = () => {
   const { eldLogs } = useAppContext();
-  const [selectedRule, setSelectedRule] = useState<string | null>(null);
-  const todayLog = eldLogs[0];
+  const [selectedPeriod, setSelectedPeriod] = useState<'today' | 'week' | 'cycle'>('today');
 
-  const complianceRules = [
+  // Mock compliance data
+  const complianceRules: ComplianceRule[] = [
     {
-      id: '11_hour_driving',
-      title: '11-Hour Driving Limit',
-      description: 'May drive a maximum of 11 hours after 10 consecutive hours off duty.',
-      current: todayLog?.drivingHours || 0,
+      id: '11-hour',
+      name: '11-Hour Driving Rule',
+      description: 'Maximum 11 hours of driving after 10 consecutive hours off duty',
       limit: 11,
-      status: (todayLog?.drivingHours || 0) <= 11 ? 'compliant' : 'violation',
-      icon: <Clock className="w-5 h-5" />,
-      color: 'blue'
+      current: 5.5,
+      period: 'daily',
+      status: 'compliant'
     },
     {
-      id: '14_hour_window',
-      title: '14-Hour Duty Window',
-      description: 'May not drive beyond the 14th consecutive hour after coming on duty, following 10 consecutive hours off duty.',
-      current: todayLog?.onDutyHours || 0,
+      id: '14-hour',
+      name: '14-Hour On-Duty Rule',
+      description: 'Cannot drive after 14th consecutive hour on duty',
       limit: 14,
-      status: (todayLog?.onDutyHours || 0) <= 14 ? 'compliant' : 'violation',
-      icon: <Timer className="w-5 h-5" />,
-      color: 'green'
+      current: 7.5,
+      period: 'daily',
+      status: 'compliant'
     },
     {
-      id: '30_min_break',
-      title: '30-Minute Break Rule',
-      description: 'Must take a 30-minute break when you have driven for a period of 8 cumulative hours without at least a 30-minute interruption.',
-      current: 1,
-      limit: 1,
-      status: 'compliant',
-      icon: <Coffee className="w-5 h-5" />,
-      color: 'yellow'
+      id: '30-minute',
+      name: '30-Minute Break Rule',
+      description: '30-minute break required after 8 hours of driving',
+      limit: 8,
+      current: 5.5,
+      period: 'continuous',
+      status: 'compliant'
     },
     {
-      id: '70_hour_limit',
-      title: '70-Hour/8-Day Limit',
-      description: 'May not drive after 70 hours on duty in 8 consecutive days. May restart after taking 34 or more consecutive hours off duty.',
+      id: '60-hour',
+      name: '60-Hour Rule',
+      description: 'Maximum 60 hours on duty in 7 consecutive days',
+      limit: 60,
       current: 45,
+      period: '7-day',
+      status: 'warning'
+    },
+    {
+      id: '70-hour',
+      name: '70-Hour Rule',
+      description: 'Maximum 70 hours on duty in 8 consecutive days',
       limit: 70,
-      status: 45 <= 70 ? 'compliant' : 'violation',
-      icon: <Calendar className="w-5 h-5" />,
-      color: 'purple'
+      current: 45,
+      period: '8-day',
+      status: 'compliant'
+    }
+  ];
+
+  const violations = [
+    {
+      id: 1,
+      date: '2024-11-15',
+      time: '16:30',
+      rule: '11-Hour Driving Rule',
+      description: 'Exceeded 11-hour driving limit by 0.5 hours',
+      severity: 'violation' as const,
+      location: 'Philadelphia, PA'
+    },
+    {
+      id: 2,
+      date: '2024-11-12',
+      time: '14:00',
+      rule: '30-Minute Break Rule',
+      description: 'Required break not taken after 8 hours of driving',
+      severity: 'warning' as const,
+      location: 'Baltimore, MD'
     }
   ];
 
@@ -61,255 +97,220 @@ const Compliance: React.FC = () => {
     }
   };
 
-  const getProgressColor = (status: string) => {
+  const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'compliant': return 'bg-green-600';
-      case 'warning': return 'bg-yellow-600';
-      case 'violation': return 'bg-red-600';
-      default: return 'bg-gray-600';
+      case 'compliant': return <CheckCircle className="w-5 h-5 text-green-500" />;
+      case 'warning': return <AlertTriangle className="w-5 h-5 text-yellow-500" />;
+      case 'violation': return <AlertTriangle className="w-5 h-5 text-red-500" />;
+      default: return <Shield className="w-5 h-5 text-gray-500" />;
     }
   };
 
-  const RuleCard: React.FC<{ rule: any }> = ({ rule }) => (
-    <div
-      className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow cursor-pointer"
-      onClick={() => setSelectedRule(selectedRule === rule.id ? null : rule.id)}
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center space-x-3">
-          <div className={`w-10 h-10 bg-${rule.color}-100 rounded-lg flex items-center justify-center`}>
-            <div className={`text-${rule.color}-600`}>
-              {rule.icon}
-            </div>
-          </div>
-          <div>
-            <h3 className="font-semibold text-gray-900">{rule.title}</h3>
-            <p className="text-sm text-gray-600">{rule.current}/{rule.limit} {rule.id.includes('hour') ? 'hours' : 'breaks'}</p>
-          </div>
-        </div>
-        <div className="flex items-center space-x-2">
-          {rule.status === 'compliant' ? (
-            <CheckCircle className="w-5 h-5 text-green-500" />
-          ) : (
-            <AlertTriangle className="w-5 h-5 text-red-500" />
-          )}
-          <span className={`text-sm font-medium ${getStatusColor(rule.status)} capitalize`}>
-            {rule.status}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <div className="w-full bg-gray-200 rounded-full h-3">
-          <div
-            className={`h-3 rounded-full transition-all duration-300 ${getProgressColor(rule.status)}`}
-            style={{ width: `${Math.min((rule.current / rule.limit) * 100, 100)}%` }}
-          ></div>
-        </div>
-        <div className="flex justify-between text-sm text-gray-500">
-          <span>Used: {rule.current}</span>
-          <span>Remaining: {Math.max(rule.limit - rule.current, 0)}</span>
-        </div>
-      </div>
-
-      {selectedRule === rule.id && (
-        <div className="mt-4 pt-4 border-t border-gray-200">
-          <p className="text-sm text-gray-700">{rule.description}</p>
-        </div>
-      )}
-    </div>
-  );
-
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">HOS Compliance</h1>
-        <p className="text-gray-600">Hours of Service regulation compliance dashboard</p>
-      </div>
-
-      {/* Overall Compliance Status */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-semibold">Overall Compliance Status</h2>
-          <div className="flex items-center space-x-2">
-            <Shield className="w-5 h-5 text-green-600" />
-            <span className="text-green-600 font-medium">Compliant</span>
-          </div>
+      {/* Header */}
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">HOS Compliance</h1>
+          <p className="text-gray-600">Monitor Hours of Service compliance status</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <CheckCircle className="w-8 h-8 text-green-600" />
-            </div>
-            <p className="text-2xl font-bold text-green-600">
-              {complianceRules.filter(rule => rule.status === 'compliant').length}
-            </p>
-            <p className="text-sm text-gray-600">Rules Compliant</p>
-          </div>
-
-          <div className="text-center">
-            <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <AlertTriangle className="w-8 h-8 text-yellow-600" />
-            </div>
-            <p className="text-2xl font-bold text-yellow-600">0</p>
-            <p className="text-sm text-gray-600">Warnings</p>
-          </div>
-
-          <div className="text-center">
-            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-2">
-              <AlertTriangle className="w-8 h-8 text-red-600" />
-            </div>
-            <p className="text-2xl font-bold text-red-600">
-              {eldLogs.reduce((acc, log) => acc + log.violations.length, 0)}
-            </p>
-            <p className="text-sm text-gray-600">Total Violations</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Current Status Rules */}
-      <div className="space-y-6">
-        <h2 className="text-lg font-semibold">Current Compliance Status</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {complianceRules.map(rule => (
-            <RuleCard key={rule.id} rule={rule} />
+        {/* Period Selector */}
+        <div className="flex space-x-2">
+          {(['today', 'week', 'cycle'] as const).map(period => (
+            <button
+              key={period}
+              onClick={() => setSelectedPeriod(period)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                selectedPeriod === period
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {period.charAt(0).toUpperCase() + period.slice(1)}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Weekly Trend */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b">
-          <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Weekly Compliance Trend</h2>
-            <TrendingUp className="w-5 h-5 text-green-600" />
+      {/* Compliance Status Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 text-green-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Compliant Rules</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {complianceRules.filter(rule => rule.status === 'compliant').length}
+              </p>
+            </div>
           </div>
         </div>
-        <div className="p-6">
-          <div className="space-y-4">
-            {/* Weekly Hours Progress */}
-            <div>
-              <ProgressBar
-                current={45}
-                max={70}
-                label="Weekly Hours (70-hour/8-day limit)"
-                colorClass="bg-purple-600"
-              />
-            </div>
 
-            {/* Daily Average */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-              <div className="bg-blue-50 rounded-lg p-3 text-center">
-                <p className="text-sm text-blue-600 font-medium">Avg Daily Drive</p>
-                <p className="text-lg font-semibold text-blue-900">7.2h</p>
-              </div>
-              <div className="bg-green-50 rounded-lg p-3 text-center">
-                <p className="text-sm text-green-600 font-medium">Avg On-Duty</p>
-                <p className="text-lg font-semibold text-green-900">9.8h</p>
-              </div>
-              <div className="bg-yellow-50 rounded-lg p-3 text-center">
-                <p className="text-sm text-yellow-600 font-medium">Breaks Taken</p>
-                <p className="text-lg font-semibold text-yellow-900">100%</p>
-              </div>
-              <div className="bg-purple-50 rounded-lg p-3 text-center">
-                <p className="text-sm text-purple-600 font-medium">Compliance Rate</p>
-                <p className="text-lg font-semibold text-purple-900">98%</p>
-              </div>
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-yellow-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Warnings</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {complianceRules.filter(rule => rule.status === 'warning').length}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow p-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+              <AlertTriangle className="w-6 h-6 text-red-600" />
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Violations</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {complianceRules.filter(rule => rule.status === 'violation').length}
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* HOS Rules Reference */}
+      {/* Compliance Rules */}
       <div className="bg-white rounded-lg shadow">
-        <div className="p-6 border-b">
-          <div className="flex items-center space-x-2">
-            <Book className="w-5 h-5 text-gray-600" />
-            <h2 className="text-lg font-semibold">HOS Rules Quick Reference</h2>
-          </div>
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">HOS Rules Status</h2>
         </div>
         <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div className="border-l-4 border-blue-500 pl-4">
-                <h4 className="font-medium text-blue-900">Property-Carrying Drivers</h4>
-                <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>• 11 hours driving after 10 consecutive hours off</li>
-                  <li>• 14 hours on-duty window</li>
-                  <li>• 30-minute break after 8 hours driving</li>
-                  <li>• 60/70 hours in 7/8 consecutive days</li>
-                </ul>
-              </div>
+          <div className="space-y-6">
+            {complianceRules.map(rule => (
+              <div key={rule.id} className="border rounded-lg p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center space-x-3">
+                    {getStatusIcon(rule.status)}
+                    <div>
+                      <h3 className="font-semibold text-gray-900">{rule.name}</h3>
+                      <p className="text-sm text-gray-600">{rule.description}</p>
+                    </div>
+                  </div>
+                  <StatusBadge status={rule.status} type="log" />
+                </div>
 
-              <div className="border-l-4 border-green-500 pl-4">
-                <h4 className="font-medium text-green-900">Rest Requirements</h4>
-                <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>• 10 consecutive hours off duty</li>
-                  <li>• 34-hour restart option</li>
-                  <li>• Sleeper berth provisions available</li>
-                </ul>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600">{rule.period} limit</span>
+                    <span className="text-sm font-medium">
+                      {rule.current}/{rule.limit} {rule.id.includes('hour') ? 'hours' : 'hours'}
+                    </span>
+                  </div>
+                  <ProgressBar
+                    current={rule.current}
+                    max={rule.limit}
+                    label=""
+                    colorClass={
+                      rule.status === 'compliant' ? 'bg-green-600' :
+                      rule.status === 'warning' ? 'bg-yellow-600' :
+                      'bg-red-600'
+                    }
+                  />
+                </div>
               </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="border-l-4 border-yellow-500 pl-4">
-                <h4 className="font-medium text-yellow-900">Short-Haul Exceptions</h4>
-                <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>• 150 air-mile radius (CDL drivers)</li>
-                  <li>• 14-hour duty period</li>
-                  <li>• Return to work location daily</li>
-                  <li>• Time records required</li>
-                </ul>
-              </div>
-
-              <div className="border-l-4 border-purple-500 pl-4">
-                <h4 className="font-medium text-purple-900">Adverse Conditions</h4>
-                <ul className="text-sm text-gray-600 mt-2 space-y-1">
-                  <li>• Up to 2 additional driving hours</li>
-                  <li>• Must be unexpected conditions</li>
-                  <li>• Proper documentation required</li>
-                </ul>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Recent Violations */}
-      {eldLogs.some(log => log.violations.length > 0) && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-          <div className="flex items-center space-x-2 mb-4">
-            <AlertTriangle className="w-5 h-5 text-red-600" />
-            <h3 className="font-semibold text-red-800">Recent Violations</h3>
-          </div>
-          <div className="space-y-3">
-            {eldLogs
-              .filter(log => log.violations.length > 0)
-              .slice(0, 3)
-              .map(log => (
-                <div key={log.id} className="bg-white rounded-lg p-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium text-red-800">{log.date}</p>
-                      <div className="mt-2 space-y-1">
-                        {log.violations.map((violation, index) => (
-                          <div key={index} className="text-sm">
-                            <p className="text-red-700 font-medium">{violation.description}</p>
-                            <p className="text-red-600">Type: {violation.type.replace('_', ' ')}</p>
-                          </div>
-                        ))}
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Recent Violations & Warnings</h2>
+        </div>
+        <div className="p-6">
+          {violations.length === 0 ? (
+            <div className="text-center py-8">
+              <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+              <p className="text-gray-500">No recent violations or warnings</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {violations.map(violation => (
+                <div key={violation.id} className={`border rounded-lg p-4 ${
+                  violation.severity === 'violation' ? 'border-red-200 bg-red-50' : 'border-yellow-200 bg-yellow-50'
+                }`}>
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <AlertTriangle className={`w-5 h-5 ${
+                        violation.severity === 'violation' ? 'text-red-500' : 'text-yellow-500'
+                      }`} />
+                      <div>
+                        <h4 className={`font-semibold ${
+                          violation.severity === 'violation' ? 'text-red-800' : 'text-yellow-800'
+                        }`}>
+                          {violation.rule}
+                        </h4>
+                        <p className={`text-sm ${
+                          violation.severity === 'violation' ? 'text-red-700' : 'text-yellow-700'
+                        }`}>
+                          {violation.description}
+                        </p>
+                        <div className="flex items-center space-x-4 text-xs mt-2">
+                          <span className={
+                            violation.severity === 'violation' ? 'text-red-600' : 'text-yellow-600'
+                          }>
+                            <Calendar className="w-3 h-3 inline mr-1" />
+                            {new Date(violation.date).toLocaleDateString()} at {violation.time}
+                          </span>
+                          <span className={
+                            violation.severity === 'violation' ? 'text-red-600' : 'text-yellow-600'
+                          }>
+                            📍 {violation.location}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                    <span className="px-2 py-1 bg-red-100 text-red-800 rounded text-xs font-medium">
-                      {log.violations.length} violation{log.violations.length > 1 ? 's' : ''}
-                    </span>
+                    <StatusBadge
+                      status={violation.severity}
+                      type="log"
+                    />
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Quick Actions */}
+      <div className="bg-white rounded-lg shadow">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
+        </div>
+        <div className="p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <button className="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+              <Clock className="w-8 h-8 text-gray-400 mb-2" />
+              <span className="text-sm font-medium">Take 30-Min Break</span>
+            </button>
+
+            <button className="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+              <Bed className="w-8 h-8 text-gray-400 mb-2" />
+              <span className="text-sm font-medium">Enter Sleeper Berth</span>
+            </button>
+
+            <button className="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+              <Coffee className="w-8 h-8 text-gray-400 mb-2" />
+              <span className="text-sm font-medium">Go Off Duty</span>
+            </button>
+
+            <button className="flex flex-col items-center p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors">
+              <Shield className="w-8 h-8 text-gray-400 mb-2" />
+              <span className="text-sm font-medium">Review Rules</span>
+            </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

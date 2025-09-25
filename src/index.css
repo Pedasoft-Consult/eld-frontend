@@ -1,0 +1,99 @@
+/* src/index.css - Base styles and Tailwind imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  }
+
+  /* Form elements base styles */
+  input, select, textarea {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  }
+
+  button {
+    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+  }
+
+  /* Link styles */
+  a {
+    @apply text-blue-600 hover:text-blue-800 focus:text-blue-800;
+  }
+}
+
+/* Component layer for reusable styles */
+@layer components {
+  /* Card component */
+  .card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden;
+  }
+
+  .card-header {
+    @apply px-6 py-4 bg-gray-50 border-b border-gray-200;
+  }
+
+  .card-body {
+    @apply p-6;
+  }
+
+  /* Navigation styles */
+  .nav-link {
+    @apply block px-3 py-2 rounded-md text-base font-medium;
+  }
+
+  .nav-link.active {
+    @apply bg-gray-900 text-white;
+  }
+
+  .nav-link:not(.active) {
+    @apply text-gray-300 hover:bg-gray-700 hover:text-white;
+  }
+
+  /* Button variations */
+  .btn-sm {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-lg;
+  }
+
+  .btn-danger {
+    @apply text-white bg-red-600 hover:bg-red-700 focus:ring-red-500;
+  }
+
+  .btn-success {
+    @apply text-white bg-green-600 hover:bg-green-700 focus:ring-green-500;
+  }
+
+  .btn-warning {
+    @apply text-white bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500;
+  }
+}
+
+/* Loading spinner */
+.spinner {
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

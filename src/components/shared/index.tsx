@@ -1,6 +1,6 @@
 // components/shared/index.tsx
 import React from 'react';
-import { Truck, User, Menu, X, LogOut } from 'lucide-react';
+import { Truck, User, Menu, X, LogOut, BarChart3, MapPin, FileText, Navigation, Shield, Settings } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 
 // Status Badge Component
@@ -196,7 +196,7 @@ export const Sidebar: React.FC<{
 
         <div className="flex flex-col h-full px-4 py-6 space-y-2">
           <NavButton icon={<BarChart3 className="w-5 h-5" />} label="Dashboard" page="dashboard" />
-          <NavButton icon={<Route className="w-5 h-5" />} label="Trips" page="trips" badge={1} />
+          <NavButton icon={<MapPin className="w-5 h-5" />} label="Trips" page="trips" badge={1} />
           <NavButton icon={<FileText className="w-5 h-5" />} label="ELD Logs" page="logs" />
           <NavButton icon={<Navigation className="w-5 h-5" />} label="Route Planner" page="routes" />
           <NavButton icon={<Shield className="w-5 h-5" />} label="HOS Compliance" page="compliance" />
@@ -227,6 +227,3 @@ export const Sidebar: React.FC<{
     </>
   );
 };
-
-// Import missing icons
-import { BarChart3, Route, FileText, Navigation, Shield, Settings } from 'lucide-react';

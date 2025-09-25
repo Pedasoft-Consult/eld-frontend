@@ -1,0 +1,67 @@
+/* App.css - Global styles for the ELD application */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom component styles */
+@layer components {
+  /* Sidebar toggle button styles */
+  .sidebar-toggle {
+    @apply lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100;
+  }
+
+  /* Navigation item styles */
+  .nav-item {
+    @apply w-full flex items-center px-2 py-2 text-sm font-medium rounded-md;
+  }
+
+  .nav-item.active {
+    @apply bg-gray-900 text-white;
+  }
+
+  .nav-item.inactive {
+    @apply text-gray-300 hover:bg-gray-700 hover:text-white;
+  }
+
+  /* Status badge base styles */
+  .status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  /* Form input styles */
+  .form-input {
+    @apply mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm;
+  }
+
+  /* Button styles */
+  .btn {
+    @apply inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+
+  .btn-primary {
+    @apply text-white bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500;
+  }
+
+  .btn-secondary {
+    @apply text-gray-700 bg-white hover:bg-gray-50 border-gray-300 focus:ring-indigo-500;
+  }
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
