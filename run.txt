@@ -1,0 +1,45 @@
+npm audit fix --force
+npm audit
+
+Troubleshooting:
+
+npm cache clean --force
+rm -rf node_modules && npm install
+
+npm install -D tailwindcss postcss autoprefixer @tailwindcss/forms
+npm install @tailwindcss/forms
+
+rm -rf node_modules/.cache
+npm start
+
+node --version
+
+
+# Install TypeScript dependencies
+npm install
+
+# Type checking
+npm run type-check
+
+# Development with TypeScript
+npm start
+
+# Build optimized TypeScript
+npm run build
+
+# Linting TypeScript
+npm run lint
+
+# Clear TypeScript cache
+rm -rf node_modules/.cache
+
+# Check types
+npm run type-check
+
+npm list typescript
+
+
+npm install @craco/craco --save-dev
+
+# Start development server
+npm start
